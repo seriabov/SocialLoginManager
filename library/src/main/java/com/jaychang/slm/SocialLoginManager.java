@@ -7,11 +7,14 @@ import android.content.Intent;
 
 import com.facebook.FacebookSdk;
 
+import com.vk.sdk.VKSdk;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
 import static com.jaychang.slm.SocialLoginManager.SocialPlatform.FACEBOOK;
 import static com.jaychang.slm.SocialLoginManager.SocialPlatform.GOOGLE;
+import static com.jaychang.slm.SocialLoginManager.SocialPlatform.OK;
+import static com.jaychang.slm.SocialLoginManager.SocialPlatform.VK;
 
 public class SocialLoginManager {
 
@@ -24,6 +27,8 @@ public class SocialLoginManager {
   private boolean withProfile = true;
   private SocialPlatform socialPlatform;
   private String clientId;
+  private String odnoklassnikiAppId;
+  private String odnoklassnikiAppKey;
 
   private SocialLoginManager(Context context) {
     appContext = context.getApplicationContext();
@@ -52,6 +57,18 @@ public class SocialLoginManager {
     return this;
   }
 
+  public SocialLoginManager vk() {
+    this.socialPlatform = VK;
+    return this;
+  }
+
+  public SocialLoginManager ok(String appId, String appKey) {
+    this.socialPlatform = OK;
+    odnoklassnikiAppId = appId;
+    odnoklassnikiAppKey = appKey;
+    return this;
+  }
+
   public SocialLoginManager google(String clientId) {
     this.clientId = clientId;
     this.socialPlatform = GOOGLE;
@@ -59,6 +76,7 @@ public class SocialLoginManager {
   }
 
   public static void init(Application application) {
+    VKSdk.initialize(application);
     FacebookSdk.sdkInitialize(application.getApplicationContext());
   }
 
@@ -77,6 +95,14 @@ public class SocialLoginManager {
       Intent intent = new Intent(appContext, GoogleLoginHiddenActivity.class);
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       intent.putExtra(GoogleLoginHiddenActivity.EXTRA_CLIENT_ID, clientId);
+      return intent;
+    } else if(socialPlatform == VK) {
+      Intent intent = new Intent(appContext, VkLoginHiddenActivity.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      return intent;
+    } else if(socialPlatform == OK) {
+      Intent intent = OkLoginHiddenActivity.createIntent(appContext, odnoklassnikiAppId, odnoklassnikiAppKey);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       return intent;
     } else {
       throw new IllegalStateException(ERROR);
@@ -109,7 +135,7 @@ public class SocialLoginManager {
   }
 
   enum SocialPlatform {
-    FACEBOOK, GOOGLE
+    FACEBOOK, GOOGLE, VK, OK
   }
 
 }

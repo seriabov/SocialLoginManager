@@ -10,6 +10,14 @@
             android:name=".GoogleLoginHiddenActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             />
+        <activity
+          android:name=".VkLoginHiddenActivity"
+          android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+          />
+        <activity
+          android:name=".OkLoginHiddenActivity"
+          android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+          />
     </application>
 
 </manifest>
