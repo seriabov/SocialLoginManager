@@ -7,7 +7,6 @@ import android.content.Intent;
 
 import com.facebook.FacebookSdk;
 
-import com.vk.sdk.VKSdk;
 import rx.Observable;
 import rx.subjects.PublishSubject;
 
@@ -29,6 +28,7 @@ public class SocialLoginManager {
   private String clientId;
   private String odnoklassnikiAppId;
   private String odnoklassnikiAppKey;
+  private int vkAppId;
 
   private SocialLoginManager(Context context) {
     appContext = context.getApplicationContext();
@@ -57,8 +57,9 @@ public class SocialLoginManager {
     return this;
   }
 
-  public SocialLoginManager vk() {
+  public SocialLoginManager vk(int appId) {
     this.socialPlatform = VK;
+    vkAppId = appId;
     return this;
   }
 
@@ -76,7 +77,6 @@ public class SocialLoginManager {
   }
 
   public static void init(Application application) {
-    VKSdk.initialize(application);
     FacebookSdk.sdkInitialize(application.getApplicationContext());
   }
 
@@ -97,7 +97,7 @@ public class SocialLoginManager {
       intent.putExtra(GoogleLoginHiddenActivity.EXTRA_CLIENT_ID, clientId);
       return intent;
     } else if(socialPlatform == VK) {
-      Intent intent = new Intent(appContext, VkLoginHiddenActivity.class);
+      Intent intent = VkLoginHiddenActivity.createIntent(appContext, vkAppId);
       intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
       return intent;
     } else if(socialPlatform == OK) {

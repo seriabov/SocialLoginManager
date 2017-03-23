@@ -1,5 +1,6 @@
 package com.jaychang.slm;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,12 +23,20 @@ import com.vk.sdk.api.model.VKList;
 
 public class VkLoginHiddenActivity extends AppCompatActivity {
 
-  private final static String FIELDS = "photo, photo_200, city, sex";
+  private static final String EXTRA_APP_ID = "app_id";
+  private static final String FIELDS = "photo, photo_200, city, sex";
+
+  public static Intent createIntent(Context context, int appId) {
+    Intent intent = new Intent(context, VkLoginHiddenActivity.class);
+    intent.putExtra(EXTRA_APP_ID, appId);
+    return intent;
+  }
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    VKSdk.customInitialize(getApplicationContext(), getIntent().getIntExtra(EXTRA_APP_ID, 0), null);
     VKSdk.login(this);
   }
 
